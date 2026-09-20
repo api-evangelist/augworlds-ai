@@ -1,0 +1,70 @@
+generated: '2026-09-19'
+method: probed
+source: https://travel.augworlds.ai/.well-known/oauth-authorization-server
+docs: https://augworlds.ai/mcp
+corroborating_source: https://travel.augworlds.ai/.well-known/oauth-protected-resource/mcp
+summary: >-
+  Travel World publishes no OpenAPI, so derive-oauth-scopes.py has nothing to read; this artifact was
+  PROBED from the RFC 8414 authorization-server metadata and the RFC 9728 protected-resource metadata
+  the provider serves on travel.augworlds.ai. Both documents list the same six scopes. The scopes are
+  MCP-resource scopes (mcp:* prefix) for the single protected resource https://travel.augworlds.ai/mcp;
+  no OIDC scopes (openid/profile/email) are advertised and no scopes are attached to the A2A bearer scheme.
+model: >-
+  Resource-family scopes with a read/write verb suffix. The provider publishes names only — no
+  per-scope descriptions exist on any public page, so the descriptions below are limited to what the
+  name itself states and are marked as such.
+authorization_server:
+  issuer: https://travel.augworlds.ai
+  metadata_url: https://travel.augworlds.ai/.well-known/oauth-authorization-server
+  http_status: 200
+  authorization_endpoint: https://travel.augworlds.ai/api/oauth/authorize
+  token_endpoint: https://travel.augworlds.ai/api/oauth/token
+  registration_endpoint: https://travel.augworlds.ai/api/oauth/register
+  revocation_endpoint: https://travel.augworlds.ai/api/oauth/revoke
+  grant_types_supported:
+  - authorization_code
+  - refresh_token
+  response_types_supported:
+  - code
+  code_challenge_methods_supported:
+  - S256
+  token_endpoint_auth_methods_supported:
+  - none
+  resource_indicators_supported: true
+  authorization_response_iss_parameter_supported: true
+protected_resource:
+  resource: https://travel.augworlds.ai/mcp
+  metadata_url: https://travel.augworlds.ai/.well-known/oauth-protected-resource/mcp
+  http_status: 200
+  bearer_methods_supported:
+  - header
+  resource_documentation: https://augworlds.ai/mcp
+scope_count: 6
+scopes:
+- name: mcp:tools:list
+  family: tools
+  access: list
+  description: Enumerate the MCP server's tools (the MCP tools/list method). Name-derived; the provider publishes no description.
+- name: mcp:tk:read
+  family: tk
+  access: read
+  description: Read access to the "tk" resource family. The provider does not expand the abbreviation anywhere public; it is not guessed here.
+- name: mcp:brandlanes:read
+  family: brandlanes
+  access: read
+  description: Read access to the "brandlanes" resource family. Name-derived; likely the direct-from-travel-partner offers the site markets as "buy direct — no middleman", but the provider does not say so.
+- name: mcp:search:read
+  family: search
+  access: read
+  description: Read access to search — the flight and hotel search the public docs describe. Name-derived.
+- name: mcp:profile:apply
+  family: profile
+  access: apply
+  description: Apply the member's saved profile (loyalty programs and travel preferences, per the public docs) to results. Name-derived; a write-shaped verb.
+- name: mcp:observations:write
+  family: observations
+  access: write
+  description: Write access to the "observations" resource family. Name-derived; the provider publishes no description.
+notes:
+- The A2A agent card's bearer scheme carries an empty scope list; the OAuth scopes above apply to the MCP resource only.
+- token_endpoint_auth_methods_supported is [none], so every registered client is a public client relying on PKCE.

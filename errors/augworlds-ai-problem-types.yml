@@ -1,0 +1,53 @@
+generated: '2026-09-19'
+method: probed
+source: Live unauthenticated POSTs to https://travel.augworlds.ai/mcp and https://travel.augworlds.ai/a2a on 2026-09-19, plus the rate-limit sentence on https://augworlds.ai/mcp
+docs: https://augworlds.ai/mcp
+format: mixed
+envelope:
+  mcp_transport:
+    media_type: application/json
+    shape: '{"error":"<UPPER_SNAKE_CODE>"}'
+    note: Transport-level (HTTP) error before any JSON-RPC envelope; not RFC 9457.
+  a2a:
+    media_type: application/json
+    shape: JSON-RPC 2.0 error object {jsonrpc, error:{code, message}, id}
+consistency_gap: >-
+  No error reference is published. The two surfaces use different envelopes for the same condition (a
+  missing bearer): the MCP endpoint returns a bare {"error":"UNAUTHORIZED"} while the A2A endpoint
+  returns a JSON-RPC error with an application-defined code. Everything past authentication is
+  unobservable without a member credential, so this catalog is limited to what an unauthenticated client
+  will actually meet.
+problem_types:
+- status: 401
+  surface: https://travel.augworlds.ai/mcp
+  code: UNAUTHORIZED
+  title: Unauthorized
+  body: '{"error":"UNAUTHORIZED"}'
+  headers:
+    www-authenticate: 'Bearer resource_metadata="https://travel.augworlds.ai/.well-known/oauth-protected-resource/mcp", error="invalid_token"'
+    cache-control: no-store
+  remediation: Follow resource_metadata to the RFC 9728 document, register a client at the advertised authorization server, complete authorization_code + PKCE, and retry with Authorization Bearer <access_token>; or send a tvl_ personal access token.
+  observed_on: POST tools/list and POST initialize without credentials
+- status: 401
+  surface: https://travel.augworlds.ai/a2a
+  code: -32001
+  title: Missing or invalid bearer token
+  body: '{"jsonrpc":"2.0","error":{"code":-32001,"message":"Missing or invalid bearer token"},"id":null}'
+  remediation: Send a Travel World-issued opaque ApiKey as Authorization Bearer, per the agent card's securitySchemes.bearer.
+  observed_on: POST agent/getAuthenticatedExtendedCard without credentials
+- status: 405
+  surface: https://travel.augworlds.ai/mcp and /a2a
+  code: null
+  title: Method Not Allowed
+  body: (empty)
+  remediation: Both endpoints are POST-only JSON-RPC surfaces; GET is not served.
+  observed_on: GET
+- status: 429
+  surface: https://travel.augworlds.ai/mcp
+  code: null
+  title: Too Many Requests
+  body: not observed
+  headers:
+    retry-after: documented
+  remediation: Back off for the Retry-After interval and retry (docs).
+  observed_on: not observed — documented only

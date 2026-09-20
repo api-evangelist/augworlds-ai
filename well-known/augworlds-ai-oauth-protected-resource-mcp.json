@@ -1,0 +1,1 @@
+{"resource":"https://travel.augworlds.ai/mcp","authorization_servers":["https://travel.augworlds.ai"],"scopes_supported":["mcp:tools:list","mcp:tk:read","mcp:brandlanes:read","mcp:search:read","mcp:profile:apply","mcp:observations:write"],"bearer_methods_supported":["header"],"resource_documentation":"https://augworlds.ai/mcp"}

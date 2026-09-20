@@ -1,0 +1,28 @@
+generated: '2026-09-19'
+method: searched
+source: https://augworlds.ai/mcp
+docs: https://augworlds.ai/mcp
+limit_count: 0
+summary: >-
+  The provider documents that a rate limit exists and how it signals, but publishes no numbers. The MCP
+  docs state: "Requests are rate-limited per key; a burst returns HTTP 429 with a Retry-After header —
+  back off and retry." No requests-per-window figure, no burst size and no per-scope or per-tool ceiling
+  is published anywhere public, and the endpoint is auth-gated so nothing could be observed live.
+  limit_count is 0 because a limit with no published value is not a limit an agent can plan against.
+rate_limits: []
+signaling:
+  scope: per-key
+  exhaustion_status: 429
+  response_headers:
+  - name: Retry-After
+    documented: true
+    note: Named in the docs as the header returned on a 429.
+  - name: X-RateLimit-Limit
+    documented: false
+  - name: X-RateLimit-Remaining
+    documented: false
+  - name: RateLimit
+    documented: false
+  client_guidance: back off and retry after the Retry-After interval
+domains:
+- travel.augworlds.ai

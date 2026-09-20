@@ -1,0 +1,81 @@
+generated: '2026-09-19'
+method: searched
+source: https://augworlds.ai/mcp
+derived_from: null
+docs:
+- https://augworlds.ai/mcp
+- https://augworlds.ai/
+- https://travel.augworlds.ai/.well-known/oauth-authorization-server
+base_url: https://travel.augworlds.ai
+media_type: application/json (MCP JSON-RPC over Streamable HTTP; A2A JSON-RPC)
+surface_note: >-
+  Travel World publishes no REST contract. Its two surfaces are an OAuth-gated remote MCP server and a
+  bearer-gated A2A JSON-RPC endpoint, both on travel.augworlds.ai, and neither could be introspected
+  without an invite-only member credential. Every convention below is therefore what the provider
+  publishes on its one public docs page plus what the discovery documents and observed 401s show; where
+  nothing is published the value is an honest none/undocumented, not a guess.
+auth:
+  style: OAuth 2.1 (dynamic client registration + authorization_code + PKCE S256) for MCP; tvl_ personal access token as a Bearer fallback; opaque ApiKey Bearer for A2A
+  detail: authentication/augworlds-ai-authentication.yml
+idempotency:
+  supported: false
+  coverage: none
+  mechanism: null
+  header: null
+  scope: []
+  retention: undocumented
+  description: >-
+    No idempotency mechanism is documented on any public surface. The write-shaped scopes
+    (mcp:profile:apply, mcp:observations:write) imply mutating tools exist, but their input schemas are
+    behind the OAuth gate and nothing public describes replay protection.
+dry_run_mode:
+  supported: false
+  grade: none
+  description: No dry-run, preview or simulate mode is documented.
+reversibility:
+  grade: none
+  write_surfaces:
+  - surface: mcp:profile:apply
+    reversal: undocumented
+    window: undocumented
+  - surface: mcp:observations:write
+    reversal: undocumented
+    window: undocumented
+  - surface: booking / payment
+    reversal: not applicable to the agent
+    window: null
+    note: >-
+      The home page states the agent "won't book, pay, cancel, or check you in" and that checkout is a
+      Stripe Link "a human checks out — you, on the web. Nothing is ever charged without you present."
+      Money movement is deliberately kept outside the agent surface, so the highest-stakes action has no
+      agent-side reversal to grade. Cancellation of a purchased fare is the travel partner's policy, and
+      none is published here.
+  description: >-
+    A reversal path exists for nothing an agent can call; no cancel/undo/restore operation and no window
+    is stated anywhere public. Graded none rather than na because write scopes are published.
+pagination:
+  style: undocumented
+  description: Not observable without tool schemas.
+versioning:
+  scheme: undocumented
+  current: agent card version 1.0.0; supportedInterfaces protocolVersion "1.0"
+  description: No API versioning or deprecation policy is published (no /changelog, /status or /docs on either host).
+request_id:
+  header: undocumented
+error_envelope:
+  mcp_transport: '{"error":"UNAUTHORIZED"} on 401 (plain JSON, not RFC 9457)'
+  a2a: JSON-RPC 2.0 error object (code -32001 on missing/invalid bearer)
+  detail: errors/augworlds-ai-problem-types.yml
+rate_limit_signaling:
+  scope: per-key
+  exhaustion_status: 429
+  headers:
+  - Retry-After
+  detail: rate-limits/augworlds-ai-rate-limits.yml
+secrets_handling:
+  guidance: >-
+    Verbatim from the docs: read the tvl_ token from an environment variable, never commit it, and never
+    paste it into a chat window — "anything you type to an agent is model input".
+crawl_policy:
+  travel.augworlds.ai: robots.txt disallows all user agents (private beta); public docs are on augworlds.ai
+  augworlds.ai: robots.txt allows / and lists /mcp in the sitemap (lastmod 2026-07-23)

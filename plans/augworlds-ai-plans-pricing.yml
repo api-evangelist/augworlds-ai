@@ -1,0 +1,28 @@
+generated: '2026-09-19'
+method: searched
+source: https://augworlds.ai/
+docs: https://augworlds.ai/mcp
+plan_count: 1
+currency: USD
+model: Free invite-only membership; no paid API tier is published. Travel purchases are paid by the member at checkout through a Stripe Link.
+plans:
+- id: membership
+  name: Members Invite (private beta)
+  price: 0.00
+  currency: USD
+  period: null
+  description: >-
+    "Membership is 100% free" and "Membership is free and allows us, collectively, to get better deals
+    direct from travel partners." Access is by invitation: entering an inviter's email unlocks access
+    immediately and grants one invite of your own; without one the request goes to a waitlist.
+  included:
+  - Personal travel agent (remembers preferences, searches and compares flights and hotels)
+  - MCP server access at https://travel.augworlds.ai/mcp (OAuth or tvl_ personal access token)
+  - Flight status by flight number, city guides, loyalty and preference pages
+  - Checkout via a Stripe Link completed by the member on the web
+  quota: null
+  overage: null
+  limits:
+  - Requests rate-limited per key; 429 + Retry-After on bursts (no published number)
+  unit: 1 member account
+  note: No pricing page exists (https://augworlds.ai/pricing returns 404). Membership price is stated on the home page and the MCP docs only.

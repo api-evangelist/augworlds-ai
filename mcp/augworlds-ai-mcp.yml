@@ -1,0 +1,78 @@
+generated: '2026-09-19'
+method: probed
+source: https://augworlds.ai/mcp
+docs: https://augworlds.ai/mcp
+summary: >-
+  Travel World operates ONE remote MCP server at https://travel.augworlds.ai/mcp (Streamable HTTP,
+  hosted on Vercel). It is gated: an anonymous POST tools/list or initialize returns HTTP 401
+  {"error":"UNAUTHORIZED"} with WWW-Authenticate: Bearer resource_metadata="https://travel.augworlds.ai/.well-known/oauth-protected-resource/mcp",
+  error="invalid_token". Clients authenticate with OAuth 2.1 (dynamic client registration + PKCE S256,
+  browser sign-in) or, for non-interactive callers, a tvl_-prefixed personal access token. Access to an
+  account is invite-only (private beta), so the tool list could not be introspected.
+deployment:
+  mode: remote
+  endpoint: https://travel.augworlds.ai/mcp
+  auth: oauth
+  verified: probed
+  note: >-
+    A hosted HTTPS endpoint an MCP client POSTs to directly; the provider documents connection recipes for
+    Claude Code (claude mcp add --transport http), Claude Desktop/claude.ai Connectors, Cursor (mcp.json url)
+    and Codex (config.toml url + bearer_token_env_var). No stdio package, no npx/uvx install and no
+    source repository is published. auth is oauth because the documented primary path is the client
+    registering itself and running the OAuth flow; a tvl_ personal access token is the documented fallback
+    for CI and service callers.
+servers:
+- id: travel-world
+  name: Travel World MCP Server
+  endpoint: https://travel.augworlds.ai/mcp
+  transport: streamable-http
+  auth: oauth
+  accepted_credentials:
+  - OAuth 2.1 access token obtained via dynamic client registration + authorization_code + PKCE (S256) at https://travel.augworlds.ai
+  - Personal access token with the tvl_ prefix, sent as a Bearer header (minted from a member account; documented for CI/service use)
+  status: live-gated
+  probe:
+    method: POST tools/list
+    http_status: 401
+    content_type: application/json
+    body: '{"error":"UNAUTHORIZED"}'
+    www_authenticate: 'Bearer resource_metadata="https://travel.augworlds.ai/.well-known/oauth-protected-resource/mcp", error="invalid_token"'
+    also_probed:
+    - method: POST initialize
+      http_status: 401
+    - method: GET /mcp
+      http_status: 405
+    fetched: '2026-09-19'
+  oauth:
+    authorization_server: https://travel.augworlds.ai
+    metadata: well-known/augworlds-ai-oauth-authorization-server.json
+    protected_resource_metadata: well-known/augworlds-ai-oauth-protected-resource-mcp.json
+    scopes: scopes/augworlds-ai-scopes.yml
+  tools: []
+  tools_note: >-
+    tools/list is auth-gated and no public tool reference exists, so no tool names are recorded — none are
+    invented. The scopes the authorization server publishes name the tool families the server exposes:
+    mcp:tools:list, mcp:tk:read, mcp:brandlanes:read, mcp:search:read, mcp:profile:apply,
+    mcp:observations:write. The public docs describe the capabilities in prose only: search real flights
+    and hotels; check any airline's flight status by number (gate, terminal, actual times); pull city
+    guides for top destinations; results shaped by saved loyalty programs and travel preferences; a
+    "travel help" prompt that lists what to ask for; checkout handed to a human via a Stripe Link.
+  rate_limits:
+    documented: Requests are rate-limited per key; a burst returns HTTP 429 with a Retry-After header.
+    detail: rate-limits/augworlds-ai-rate-limits.yml
+  access:
+    model: invite-only private beta; membership free
+    signup: https://augworlds.ai/
+    login: https://travel.augworlds.ai/api/auth/login
+client_configs:
+  claude_code: claude mcp add --transport http --scope user travel-world https://travel.augworlds.ai/mcp
+  claude_desktop: Settings -> Connectors -> Add custom connector -> https://travel.augworlds.ai/mcp
+  cursor: '{"mcpServers":{"travel-world":{"url":"https://travel.augworlds.ai/mcp"}}}'
+  codex: '[mcp_servers.travel_world] url = "https://travel.augworlds.ai/mcp" bearer_token_env_var = "TRAVEL_AW_MCP_TOKEN"'
+x-evidence:
+  fetched: '2026-09-19'
+  docs_url: https://augworlds.ai/mcp
+  docs_http_status: 200
+  docs_lastmod: '2026-07-23'
+  endpoint_url: https://travel.augworlds.ai/mcp
+  endpoint_http_status: 401

@@ -1,0 +1,106 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Live probes of https://travel.augworlds.ai/.well-known/* discovery documents and the /mcp and /a2a
+  endpoints on 2026-09-19, cross-checked against the public MCP docs at https://augworlds.ai/mcp.
+  No OpenAPI exists to derive from; every entry below is evidenced by a fetched document.
+standards:
+- id: rfc8414
+  name: RFC 8414 OAuth 2.0 Authorization Server Metadata
+  conforms: true
+  evidence: >-
+    https://travel.augworlds.ai/.well-known/oauth-authorization-server returned HTTP 200 application/json
+    with issuer, authorization_endpoint, token_endpoint, registration_endpoint, revocation_endpoint,
+    scopes_supported, response_types_supported, grant_types_supported,
+    code_challenge_methods_supported and token_endpoint_auth_methods_supported. Saved verbatim to
+    well-known/augworlds-ai-oauth-authorization-server.json.
+- id: rfc9728
+  name: RFC 9728 OAuth 2.0 Protected Resource Metadata
+  conforms: true
+  evidence: >-
+    https://travel.augworlds.ai/.well-known/oauth-protected-resource and the path-suffixed
+    /.well-known/oauth-protected-resource/mcp both return HTTP 200 naming resource
+    https://travel.augworlds.ai/mcp, authorization_servers, scopes_supported, bearer_methods_supported
+    and resource_documentation. The MCP endpoint's 401 carries WWW-Authenticate: Bearer
+    resource_metadata="…/.well-known/oauth-protected-resource/mcp", error="invalid_token", which is the
+    RFC 9728 section 5 challenge.
+- id: rfc7636
+  name: RFC 7636 PKCE
+  conforms: true
+  evidence: code_challenge_methods_supported [S256] in the authorization-server metadata; the docs describe the client running the OAuth flow with a browser sign-in and no client secret.
+- id: rfc7591
+  name: RFC 7591 OAuth 2.0 Dynamic Client Registration
+  conforms: true
+  evidence: registration_endpoint https://travel.augworlds.ai/api/oauth/register in the authorization-server metadata; the docs say "your client registers itself and runs the OAuth flow".
+  caveat: The registration endpoint was not exercised (doing so would create a client on the provider's side); conformance is asserted from the published metadata.
+- id: rfc8707
+  name: RFC 8707 Resource Indicators for OAuth 2.0
+  conforms: true
+  evidence: resource_indicators_supported true in the authorization-server metadata.
+- id: rfc9207
+  name: RFC 9207 OAuth 2.0 Authorization Server Issuer Identification
+  conforms: true
+  evidence: authorization_response_iss_parameter_supported true in the authorization-server metadata.
+- id: rfc7009
+  name: RFC 7009 OAuth 2.0 Token Revocation
+  conforms: true
+  evidence: revocation_endpoint https://travel.augworlds.ai/api/oauth/revoke in the authorization-server metadata.
+  caveat: Endpoint not exercised.
+- id: oauth2
+  name: OAuth 2.0 / 2.1 authorization_code with refresh tokens, public clients
+  conforms: true
+  evidence: grant_types_supported [authorization_code, refresh_token], response_types_supported [code], token_endpoint_auth_methods_supported [none] — the OAuth 2.1 public-client profile (PKCE mandatory, no implicit grant).
+- id: mcp-authorization
+  name: MCP Authorization specification (2025-06-18 / 2025-11 line) — OAuth 2.1 resource server with RFC 9728 discovery
+  conforms: true
+  evidence: >-
+    The MCP endpoint at https://travel.augworlds.ai/mcp answers an anonymous POST with 401 and the
+    resource_metadata challenge the MCP authorization spec requires, the protected-resource document names
+    the authorization server, and the authorization server advertises PKCE S256 and dynamic client
+    registration — the three pieces an MCP client needs to authorize without out-of-band configuration.
+    The docs' recipes for Claude Code, Claude Desktop and Cursor rely on exactly this.
+- id: mcp-streamable-http
+  name: MCP Streamable HTTP transport
+  conforms: true
+  evidence: The docs describe the server as "Remote (Streamable HTTP) server at https://travel.augworlds.ai/mcp"; GET /mcp returns 405 and POST /mcp is answered (401), the expected shape for a POST-driven Streamable HTTP endpoint.
+  caveat: The protocol revision negotiated by initialize could not be observed because initialize is gated (401).
+- id: a2a-1.0
+  name: A2A Protocol 1.0.0 Agent Card
+  conforms: true
+  evidence: https://travel.augworlds.ai/.well-known/agent-card.json (HTTP 200) passes the three hard checks — capabilities is an object, protocolVersion "1.0" on supportedInterfaces[0], skills is an array. Graded in a2a/augworlds-ai-a2a.yml.
+  caveat: skills is empty and documentationUrl 307s to a member sign-in.
+- id: json-rpc-2.0
+  name: JSON-RPC 2.0
+  conforms: true
+  evidence: POST https://travel.augworlds.ai/a2a returned a well-formed JSON-RPC 2.0 error object {"jsonrpc":"2.0","error":{"code":-32001,"message":"Missing or invalid bearer token"},"id":null}.
+- id: oidc
+  name: OpenID Connect Discovery
+  conforms: false
+  evidence: /.well-known/openid-configuration returns 404 on augworlds.ai, www.augworlds.ai and travel.augworlds.ai; no openid/profile/email scopes are advertised.
+- id: rfc9116
+  name: RFC 9116 security.txt
+  conforms: false
+  evidence: /.well-known/security.txt returns 404 on all three hosts.
+- id: rfc9727
+  name: RFC 9727 API Catalog
+  conforms: false
+  evidence: /.well-known/api-catalog returns 404 on all three hosts.
+- id: openapi
+  name: OpenAPI / Swagger
+  conforms: false
+  evidence: /openapi.json, /openapi.yaml, /swagger.json, /api-docs, /docs, /redoc and /api/openapi.json all return 404 on travel.augworlds.ai and augworlds.ai; no REST contract is published.
+- id: rfc9457
+  name: RFC 9457 Problem Details
+  conforms: false
+  evidence: The observed 401 bodies are {"error":"UNAUTHORIZED"} (MCP) and a JSON-RPC error object (A2A); neither is application/problem+json.
+domain_standard:
+  market: travel (flights, hotels)
+  candidates_checked:
+  - NDC (IATA New Distribution Capability)
+  - OTA (OpenTravel Alliance)
+  - HTNG
+  declared: none
+  note: >-
+    REWARD-ONLY. No contract is published, so no domain-standard signature (NDC message set, OTA schema,
+    HTNG) can be read from a spec. The site says the platform buys "direct from travel partners" but names
+    no distribution standard. Nothing is asserted.

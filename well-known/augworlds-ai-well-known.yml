@@ -1,0 +1,96 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Live GET probes of the named /.well-known/* path list on augworlds.ai, www.augworlds.ai and
+  travel.augworlds.ai, 2026-09-19. Every row below is a request that was actually issued; every status
+  is the one returned.
+summary:
+  hosts_probed: 3
+  paths_probed: 25
+  documents_served: 4
+  note: >-
+    All four served documents sit on the product/MCP host travel.augworlds.ai: an RFC 8414
+    authorization-server metadata document, RFC 9728 protected-resource metadata at both the bare path
+    and the /mcp path suffix the 401 WWW-Authenticate header points at, and an A2A agent card. The
+    marketing apex and www return a Next.js 404 page (HTTP 404, text/html) for every path. No host serves
+    security.txt, openid-configuration, api-catalog or ai-plugin.json.
+  crawl_policy: >-
+    travel.augworlds.ai/robots.txt disallows all user agents ("invite-only ... private beta") and says
+    the public MCP docs live at augworlds.ai/mcp. Only the protocol discovery documents an agent needs
+    were fetched from that host.
+hosts:
+- host: travel.augworlds.ai
+  role: Product host — serves the MCP endpoint, the A2A endpoint, the OAuth authorization server and the agent card
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: augworlds-ai-oauth-authorization-server.json
+    standard: RFC 8414
+    note: Issuer https://travel.augworlds.ai; authorization_code + refresh_token, PKCE S256 only, dynamic client registration at /api/oauth/register, token_endpoint_auth_methods none (public clients), resource indicators (RFC 8707) and iss response parameter (RFC 9207) supported, six mcp:* scopes.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    file: augworlds-ai-oauth-protected-resource.json
+    standard: RFC 9728
+    note: resource https://travel.augworlds.ai/mcp, authorization_servers [https://travel.augworlds.ai], bearer_methods header, resource_documentation https://augworlds.ai/mcp.
+  - path: /.well-known/oauth-protected-resource/mcp
+    status: 200
+    content_type: application/json
+    file: augworlds-ai-oauth-protected-resource-mcp.json
+    standard: RFC 9728 (path-suffixed variant)
+    note: Byte-identical to the bare-path document. This is the URL the MCP endpoint's 401 names in WWW-Authenticate resource_metadata.
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json
+    file: ../a2a/augworlds-ai-agent-card.json
+    standard: A2A 1.0.0
+    note: Captured and graded in a2a/augworlds-ai-a2a.yml.
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/mcp.json
+    status: 404
+- host: augworlds.ai
+  role: Marketing apex — members invite page and the public MCP docs at /mcp
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: www.augworlds.ai
+  role: Alias of the marketing apex (same Vercel deployment, same 404 body)
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404

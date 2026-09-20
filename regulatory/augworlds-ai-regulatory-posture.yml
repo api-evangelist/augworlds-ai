@@ -1,0 +1,34 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+signals: {}
+probed:
+- url: https://augworlds.ai/accessibility
+  status: 404
+- url: https://augworlds.ai/legal/subprocessors
+  status: 404
+- url: https://augworlds.ai/legal/dpa
+  status: 404
+- url: https://augworlds.ai/transparency
+  status: 404
+- url: https://augworlds.ai/privacy/requests
+  status: 404
+- url: https://augworlds.ai/security/sbom
+  status: 404
+- url: https://augworlds.ai/security
+  status: 404
+- url: https://augworlds.ai/.well-known/security.txt
+  status: 404
+- url: https://travel.augworlds.ai/.well-known/security.txt
+  status: 404
+- url: https://travel.augworlds.ai/privacy
+  status: 200
+  note: A real privacy page ("Privacy — Augmented Worlds") exists on the product host; it was recorded as a PrivacyPolicy pointer but carries none of the structured signals this artifact tracks (no GPC statement, subprocessor table, DSR endpoint or residency statement was found in its text).
+- url: https://travel.augworlds.ai/terms
+  status: 200
+  note: A real terms page ("Terms — Augmented Worlds"); no support-lifetime, incident-notification SLA or exit-assistance statement.
+note: >-
+  HARVEST ONLY. Travel World publishes no SBOM, VPAT, subprocessor list, DPA, transparency report,
+  training-data summary, AI-transparency page, data-residency doc, age-assurance doc or notice-and-action
+  channel on any public surface. Empty signals is the finding; which regimes reach the provider is decided
+  by the regime map, not here.

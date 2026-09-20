@@ -1,0 +1,134 @@
+generated: '2026-09-19'
+method: probed
+source: https://travel.augworlds.ai/.well-known/agent-card.json
+card:
+  file: a2a/augworlds-ai-agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: travel.augworlds.ai
+  note: >-
+    The card is served from the product host travel.augworlds.ai, not the marketing apex. augworlds.ai
+    and www.augworlds.ai were probed the same day and return a real Next.js 404 for both
+    /.well-known/agent-card.json and /.well-known/agent.json; travel.augworlds.ai 404s the legacy
+    /.well-known/agent.json. Ownership is not in question: the card's provider.url is
+    https://travel.augworlds.ai, the same host serves the MCP endpoint and the RFC 8414 / RFC 9728
+    discovery documents, and the public MCP docs at https://augworlds.ai/mcp name the host as
+    Travel World's server. Travel World is listed on a2aregistry.org (id 4c19eab2-4b8b-4ae6-a5f8-6010c78c4f75)
+    with this exact wellKnownURI, which is how the provider entered the harvest backlog.
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://travel.augworlds.ai/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json
+  body_bytes: 817
+  body_parses_as: JSON object with AgentCard shape
+  corroborating_probes:
+  - url: https://travel.augworlds.ai/.well-known/agent.json
+    http_status: 404
+  - url: https://augworlds.ai/.well-known/agent-card.json
+    http_status: 404
+  - url: https://augworlds.ai/.well-known/agent.json
+    http_status: 404
+  - url: https://www.augworlds.ai/.well-known/agent-card.json
+    http_status: 404
+  - url: https://travel.augworlds.ai/a2a
+    http_status: 405
+    note: GET on the declared A2A interface returns 405 with an empty body — the endpoint exists and expects the JSONRPC POST the card declares.
+  - url: https://travel.augworlds.ai/a2a
+    method: POST agent/getAuthenticatedExtendedCard
+    http_status: 401
+    body: '{"jsonrpc":"2.0","error":{"code":-32001,"message":"Missing or invalid bearer token"},"id":null}'
+    note: The A2A endpoint answers JSON-RPC and enforces the bearer scheme the card declares. The extended card (capabilities.extendedAgentCard true) is behind the same credential, so it was not fetched.
+agent_card:
+  name: Travel World
+  description: Agent-native travel platform with a ComBot marketplace.
+  version: 1.0.0
+  documentation_url: https://travel.augworlds.ai/marketplace
+  documentation_url_status: 307 -> /api/auth/login?returnTo=%2Fagent (member sign-in; not publicly readable)
+  icon_url: https://travel.augworlds.ai/favicon.ico
+  provider:
+    organization: Travel World
+    url: https://travel.augworlds.ai
+  supported_interfaces:
+  - url: https://travel.augworlds.ai/a2a
+    protocol_binding: JSONRPC
+    protocol_version: '1.0'
+  capabilities:
+    streaming: true
+    push_notifications: false
+    extended_agent_card: true
+  default_input_modes:
+  - text/plain
+  - application/json
+  default_output_modes:
+  - text/plain
+  - application/json
+  security_schemes:
+    bearer:
+      type: httpAuthSecurityScheme
+      scheme: Bearer
+      description: Travel World-issued opaque ApiKey bearer token.
+  skill_count: 0
+  skills: []
+conformance:
+  spec: A2A 1.0.0
+  grade: conformant
+  protocol_version: '1.0'
+  preferred_transport: null
+  transport: JSONRPC (via supportedInterfaces[0].protocolBinding)
+  hard_checks:
+    capabilities_is_object: true
+    protocol_version_present: true
+    skills_is_array: true
+  optional_fields:
+    default_input_modes: true
+    default_output_modes: true
+    preferred_transport: false
+  grade_basis: >-
+    Graded against the A2A 1.0.0 hard checks. capabilities is an OBJECT (pass) with streaming,
+    pushNotifications and extendedAgentCard as fields. protocolVersion is present (pass), declared as
+    "1.0" on supportedInterfaces[0], which is where A2A 1.0.0 carries it after supportedInterfaces[]
+    replaced the 0.3-era top-level url/preferredTransport/protocolVersion triple — the same reading
+    applied to leadping's card. skills is an ARRAY (pass), but an EMPTY one; see deviations. Both
+    optional discriminators are present: defaultInputModes and defaultOutputModes are declared.
+    preferredTransport is absent because 1.0.0 superseded it with supportedInterfaces[].protocolBinding,
+    which the card declares (JSONRPC).
+  deviations:
+  - field: skills
+    observed: empty array
+    note: >-
+      The public card advertises NO skills. The marketing page describes flight and hotel search, flight
+      status by number, city guides and loyalty/preference-shaped results, and the OAuth metadata names
+      six mcp:* scopes, but none of that is projected into the A2A card. An agent that reads only this
+      card learns that Travel World exists and takes a bearer token, not what it can do. The card sets
+      capabilities.extendedAgentCard true, so the skill list presumably lives on the authenticated
+      extended card, which cannot be read without a member credential.
+  - field: protocolVersion
+    observed: carried on supportedInterfaces[0], not at the top level
+    note: A reader written against A2A 0.3.0 will find no top-level protocolVersion and may misread the card as version-less. The card is consistently 1.0-shaped (supportedInterfaces, protocolBinding, the oneof-wrapped securitySchemes).
+  - field: security[0].schemes.bearer.list
+    observed: empty array
+    note: The bearer scheme is required but no scope list is attached; the description says an opaque Travel World ApiKey, which is the tvl_ personal access token the MCP docs describe. The OAuth scopes published for the MCP resource are not referenced by the A2A card.
+  - field: documentationUrl
+    observed: https://travel.augworlds.ai/marketplace 307s to a member sign-in
+    note: The card points at documentation that is not publicly reachable; the public, crawlable docs are at https://augworlds.ai/mcp (MCP only). robots.txt on travel.augworlds.ai disallows every crawler.
+registry:
+  a2aregistry_org:
+    id: 4c19eab2-4b8b-4ae6-a5f8-6010c78c4f75
+    fetched: '2026-09-19'
+    conformance: true
+    is_healthy: true
+    task_conformance_passed: false
+    maintainer_notes: Smoke test against message/send failed with an unrecognised error.
+    note: >-
+      The registry marks the card conformant and the endpoint healthy but records that its message/send
+      smoke test failed — consistent with the 401 the endpoint returns to an unauthenticated JSON-RPC
+      call. Health here means "the host answers", not "an agent can complete a task".
+surface_relationship:
+  note: >-
+    Travel World publishes TWO agent surfaces on one host and no REST contract. A2A: a skill-less card at
+    https://travel.augworlds.ai/.well-known/agent-card.json with a bearer-gated JSONRPC endpoint at
+    https://travel.augworlds.ai/a2a. MCP: a remote Streamable HTTP server at https://travel.augworlds.ai/mcp
+    gated by OAuth 2.1 (PKCE + dynamic client registration) or a tvl_ personal access token (see
+    mcp/augworlds-ai-mcp.yml). No OpenAPI, GraphQL, AsyncAPI, gRPC or WSDL surface was found on any host.

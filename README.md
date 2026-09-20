@@ -64,5 +64,9 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Travel World is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry) and added to the network as a stub for full-pipeline profiling.
-- https://augworlds.ai/
+Travel World is the agent-native travel product of Augmented Worlds (augworlds.ai) — an invite-only private beta whose personal travel agent searches flights and hotels, checks flight status and pulls city guides, exposed to agents as an OAuth-gated remote MCP server and an A2A 1.0 agent card on travel.augworlds.ai. No REST contract is published.
+
+- Website: https://augworlds.ai/
+- MCP docs: https://augworlds.ai/mcp
+- MCP endpoint: https://travel.augworlds.ai/mcp (OAuth 2.1 / tvl_ token)
+- A2A agent card: https://travel.augworlds.ai/.well-known/agent-card.json

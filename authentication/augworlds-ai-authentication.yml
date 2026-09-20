@@ -1,0 +1,86 @@
+generated: '2026-09-19'
+method: searched
+source: https://augworlds.ai/mcp
+docs: https://augworlds.ai/mcp
+spec: null
+summary:
+  types:
+  - oauth2
+  - http
+  transport: Authorization header, Bearer scheme, HTTPS only
+  note: >-
+    No OpenAPI exists, so derive-authentication.py has nothing to read. The profile was assembled from
+    the public MCP docs page (searched), the RFC 8414 / RFC 9728 discovery documents on
+    travel.augworlds.ai (probed) and the A2A agent card's securitySchemes (probed). Two surfaces, three
+    credential paths.
+schemes:
+- name: oauth
+  type: oauth2
+  flow: authorizationCode
+  pkce: S256 (required — the only code_challenge_method advertised)
+  dynamic_client_registration: https://travel.augworlds.ai/api/oauth/register
+  authorizationUrl: https://travel.augworlds.ai/api/oauth/authorize
+  tokenUrl: https://travel.augworlds.ai/api/oauth/token
+  revocationUrl: https://travel.augworlds.ai/api/oauth/revoke
+  refreshUrl: https://travel.augworlds.ai/api/oauth/token
+  client_type: public (token_endpoint_auth_methods_supported is [none])
+  scopes: scopes/augworlds-ai-scopes.yml
+  applies_to:
+  - https://travel.augworlds.ai/mcp
+  description: >-
+    The documented primary path for the MCP server. The client discovers the authorization server from the
+    401's WWW-Authenticate resource_metadata, registers itself, and runs authorization_code + PKCE with a
+    browser sign-in to a Travel World member account. "There is no token to copy, no --header, and nothing
+    to paste into chat."
+  sources:
+  - https://augworlds.ai/mcp
+  - https://travel.augworlds.ai/.well-known/oauth-authorization-server
+  - https://travel.augworlds.ai/.well-known/oauth-protected-resource/mcp
+- name: personal-access-token
+  type: http
+  scheme: bearer
+  bearerFormat: opaque token with the tvl_ prefix
+  applies_to:
+  - https://travel.augworlds.ai/mcp
+  description: >-
+    Documented fallback for non-interactive callers (CI jobs, servers, scripts, and MCP clients without
+    OAuth support such as Codex). Minted instantly by a member once inside the beta. The docs tell users to
+    read it from an environment variable, never commit it, and never paste it into a chat window.
+  sources:
+  - https://augworlds.ai/mcp
+- name: bearer
+  type: http
+  scheme: bearer
+  bearerFormat: Travel World-issued opaque ApiKey bearer token
+  applies_to:
+  - https://travel.augworlds.ai/a2a
+  description: >-
+    The A2A agent card's sole security scheme (httpAuthSecurityScheme, scheme Bearer). An unauthenticated
+    JSON-RPC POST returns 401 with error -32001 "Missing or invalid bearer token". The card attaches no
+    scope list, and the OAuth scopes above are published for the MCP resource only.
+  sources:
+  - https://travel.augworlds.ai/.well-known/agent-card.json
+credentials:
+- id: oauth-access-token
+  header: 'Authorization: Bearer <access_token>'
+  prefix: null
+  use: MCP server via OAuth 2.1 client registration + PKCE (interactive clients)
+- id: personal-access-token
+  header: 'Authorization: Bearer tvl_...'
+  prefix: tvl_
+  use: MCP server from CI, services and non-OAuth clients
+- id: a2a-api-key
+  header: 'Authorization: Bearer <opaque ApiKey>'
+  prefix: null
+  use: A2A JSON-RPC endpoint
+access_prerequisite: >-
+  Every credential requires a Travel World member account, and membership is invite-only (private beta;
+  free). Signup at https://augworlds.ai/; sign-in at https://travel.augworlds.ai/api/auth/login.
+observed_challenges:
+- url: https://travel.augworlds.ai/mcp
+  http_status: 401
+  www_authenticate: 'Bearer resource_metadata="https://travel.augworlds.ai/.well-known/oauth-protected-resource/mcp", error="invalid_token"'
+  body: '{"error":"UNAUTHORIZED"}'
+- url: https://travel.augworlds.ai/a2a
+  http_status: 401
+  body: '{"jsonrpc":"2.0","error":{"code":-32001,"message":"Missing or invalid bearer token"},"id":null}'
