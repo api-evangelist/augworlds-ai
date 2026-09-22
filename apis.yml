@@ -26,6 +26,17 @@ tags:
   - MCP
   - A2A
   - AI Agents
+  - Authentication
+  - Marketplace
+tags_raw:
+  - Company
+  - Travel
+  - Flights
+  - Hotels
+  - Travel Agent
+  - MCP
+  - A2A
+  - AI Agents
   - OAuth
   - Marketplace
 apis:
@@ -42,6 +53,12 @@ apis:
     humanURL: https://augworlds.ai/mcp
     baseURL: https://travel.augworlds.ai/mcp
     tags:
+      - MCP
+      - Travel
+      - Flights
+      - Hotels
+      - Authentication
+    tags_raw:
       - MCP
       - Travel
       - Flights
