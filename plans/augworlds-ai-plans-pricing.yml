@@ -26,3 +26,17 @@ plans:
   - Requests rate-limited per key; 429 + Retry-After on bursts (no published number)
   unit: 1 member account
   note: No pricing page exists (https://augworlds.ai/pricing returns 404). Membership price is stated on the home page and the MCP docs only.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - free
+  units: []
+  plans:
+  - name: Members Invite (private beta)
+    access: other
+    model: free
+    model_how: derived
+    units:
+    - other
+    periods: []
