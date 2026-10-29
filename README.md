@@ -64,9 +64,116 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Travel World is the agent-native travel product of Augmented Worlds (augworlds.ai) — an invite-only private beta whose personal travel agent searches flights and hotels, checks flight status and pulls city guides, exposed to agents as an OAuth-gated remote MCP server and an A2A 1.0 agent card on travel.augworlds.ai. No REST contract is published.
+Travel World is the agent-native travel product of Augmented Worlds (augworlds.ai), an invite-only private beta in which members get a personal travel agent that searches and compares real flights and hotels, checks airline flight status by number, pulls city guides, and shapes results with saved loyalty programs and preferences, then hands checkout to the member as a Stripe Link so nothing is charged without a human present. It is exposed to agents as a remote MCP server gated by OAuth 2.1 (dynamic client registration + PKCE) or a tvl_ personal access token, and as an A2A 1.0 agent card with a bearer-gated JSON-RPC endpoint, both on travel.augworlds.ai. No REST contract, SDK or CLI is published; membership is free but by invitation.
 
-- Website: https://augworlds.ai/
-- MCP docs: https://augworlds.ai/mcp
-- MCP endpoint: https://travel.augworlds.ai/mcp (OAuth 2.1 / tvl_ token)
-- A2A agent card: https://travel.augworlds.ai/.well-known/agent-card.json
+**Areas:** Company · Travel · Flights · Hotels · Travel Agent · MCP · A2A · AI Agents · Authentication · Marketplace
+
+## Travel World on APIs.io
+
+Everything profiled for Travel World is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/augworlds-ai/](https://apis.io/providers/augworlds-ai/)** — or go straight to one of the APIs or properties below.
+
+### APIs (2)
+
+- [Travel World MCP Server](https://apis.io/apis/augworlds-ai/travel-world-mcp-server/) — Remote Model Context Protocol server (Streamable HTTP) at https://travel.augworlds.ai/mcp. Clients authenticate with OAuth 2.1 — the client registers itself…
+- [Travel World A2A Agent](https://apis.io/apis/augworlds-ai/travel-world-a2a-agent/) — Agent-to-Agent surface declared by the A2A 1.0 agent card at https://travel.augworlds.ai/.well-known/agent-card.json: a JSONRPC binding at…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [augworlds-ai-mcp.yml](https://apis.io/servers/augworlds-ai/augworlds-ai-mcp-yml/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Augworlds Ai Authentication](https://apis.io/security/augworlds-ai/augworlds-ai-authentication/)
+- [Augworlds Ai Domain Security](https://apis.io/security/augworlds-ai/augworlds-ai-domain-security/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Augworlds Ai Scopes](https://apis.io/scopes/augworlds-ai/augworlds-ai-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Augworlds Ai Plans Pricing](https://apis.io/plans/augworlds-ai/augworlds-ai-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Augworlds Ai Rate Limits](https://apis.io/rate-limits/augworlds-ai/augworlds-ai-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://augworlds.ai/)
+- [Documentation](https://augworlds.ai/mcp)
+- [Pricing](https://augworlds.ai/)
+- [Sign up](https://augworlds.ai/)
+- [Terms of service](https://travel.augworlds.ai/terms)
+- [Privacy policy](https://travel.augworlds.ai/privacy)
+
+## API Evangelist rating
+
+**Kin Score 29.3** — thin · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 68.3 |
+| Contract quality | 0.0 |
+| Contract governance | 18.2 |
+| Operational transparency | 0.0 |
+| Developer ergonomics | 21.4 |
+| Access clarity | 65.8 |
+
+**Agent readiness 33.3** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | documented (partial credit) |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | conformant |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+
+**Regulatory alignment 34.3** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/augworlds-ai/](https://apis.io/providers/augworlds-ai/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Travel World: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/augworlds-ai/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
